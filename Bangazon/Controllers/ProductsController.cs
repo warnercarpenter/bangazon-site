@@ -72,13 +72,15 @@ namespace Bangazon.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,DateCreated,Description,Title,Price,Quantity,UserId,City,ImagePath,ProductTypeId")] Product product)
         {
-
+            // addind current dateTime
             product.DateCreated = DateTime.Now;
             ModelState.Remove("UserId");
             if (ModelState.IsValid)
             {
+                // adding current userId
                 var user = await GetCurrentUserAsync();
                 product.UserId = user.Id;
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
