@@ -41,7 +41,7 @@ namespace Bangazon.Controllers
                                         AS
                                         (
                                         SELECT p.Title, p.ProductId, pt.Label, pt.ProductTypeId, p.Price, p.ImagePath,
-                                        ROW_NUMBER() OVER (PARTITION BY pt.ProductTypeId ORDER BY pt.ProductTypeId DESC) AS RowNum 
+                                        ROW_NUMBER() OVER (PARTITION BY pt.ProductTypeId ORDER BY p.DateCreated DESC) AS RowNum 
                                         from Product p
                                         join ProductType pt on p.ProductTypeId = pt.ProductTypeId
                                         )
