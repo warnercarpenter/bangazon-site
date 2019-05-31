@@ -7,22 +7,71 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
+using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
 
 namespace Bangazon.Controllers
 {
     public class ProductTypesController : Controller
     {
+
+        private readonly IConfiguration _config;
+        private string _connectionString;
         private readonly ApplicationDbContext _context;
 
-        public ProductTypesController(ApplicationDbContext context)
+        public ProductTypesController(IConfiguration config, ApplicationDbContext context)
         {
+            _config = config;
+            _connectionString = _config.GetConnectionString("DefaultConnection");
             _context = context;
         }
+
+        public SqlConnection Connection => new SqlConnection(_config.GetConnectionString("DefaultConnection"));
 
         // GET: ProductTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ProductType.ToListAsync());
+
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"WITH MyRowSet
+                                        AS
+                                        (
+                                        SELECT p.Title, p.ProductId, pt.Label, pt.ProductTypeId, p.Price, p.ImagePath,
+                                        ROW_NUMBER() OVER (PARTITION BY pt.ProductTypeId ORDER BY p.DateCreated DESC) AS RowNum 
+                                        from Product p
+                                        join ProductType pt on p.ProductTypeId = pt.ProductTypeId
+                                        )
+                                        SELECT * FROM MyRowSet WHERE RowNum <= 3";
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<Product> products = new List<Product>();
+                    while (reader.Read())
+                    {
+                        Product product = new Product
+                        {
+                            Title = reader.GetString(reader.GetOrdinal("Title")),
+                            ProductId = reader.GetInt32(reader.GetOrdinal("ProductId")),
+
+                            ProductType = new ProductType {
+                                Label = reader.GetString(reader.GetOrdinal("Label")),
+                                ProductTypeId = reader.GetInt32(reader.GetOrdinal("ProductTypeId"))
+                            }
+                        };
+
+                        products.Add(product);
+                    }
+
+                    ViewBag.Products = products;
+
+                    reader.Close();
+
+                    return View(await _context.ProductType.Include(pt => pt.Products).ToListAsync());
+                }
+            }
         }
 
         // GET: ProductTypes/Details/5

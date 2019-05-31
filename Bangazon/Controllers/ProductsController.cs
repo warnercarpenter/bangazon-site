@@ -89,7 +89,7 @@ namespace Bangazon.Controllers
             product.DateCreated = DateTime.Now;
             ModelState.Remove("UserId");
             //if product type is 0, give the error message
-            if(product.ProductTypeId == 0)
+            if (product.ProductTypeId == 0)
             {
                 ViewBag.Message = string.Format("Please select the Category");
                 ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
