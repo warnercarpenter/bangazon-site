@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Bangazon.Models.PaymentType>
+
+@{
+    ViewData["Title"] = "ViewPaymentTypes";
+}
+
+<h1>My Payment Types</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.DateCreated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccountNumber)
+            </th>
+            
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.DateCreated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountNumber)
+            </td>
+
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("DeletePaymentType", "DeletePaymentType", new { id = item.PaymentTypeId })
+            </td>
+            
+        </tr>
+}
+    </tbody>
+</table>
+<div>
+    <a asp-action="Index">Back to Profile</a>
+</div>
