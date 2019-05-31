@@ -45,7 +45,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Index">Profile</a>
                         </li>
                         <li>
-                            @using (Html.BeginForm("SearchProducts(SearchProduct)", "Products"))
+                            @using (Html.BeginForm("Index", "Products"))
                             { 
                                 <input type="text" id="SearchProduct" name="searchProduct"/>
                             }

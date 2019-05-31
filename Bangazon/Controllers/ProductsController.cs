@@ -9,6 +9,7 @@ using Bangazon.Data;
 using Bangazon.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Collections;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bangazon.Controllers
 {
@@ -31,15 +32,20 @@ namespace Bangazon.Controllers
         //}
 
         // GET: Products
+        [Authorize]
         public async Task<IActionResult> Index(string SearchProduct)
         {
-            var applicationDbContext = _context.Product.Include(p => p.ProductType).Include(p => p.User);
+            // if searchBox is not empty then filter product list
             if (SearchProduct != null)
             {
-                applicationDbContext = _context.Product.Include(p => p.ProductType)
-                    .Include(p => p.User)
-                    .Where(p=> p.Title.Contains(SearchProduct));
+                var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
+                   .Include(p => p.User)
+                   .Where(p => p.Title.Contains(SearchProduct));
+
+                return View(await applicationDbContext1.ToListAsync());
             }
+            //if not show all products
+            var applicationDbContext = _context.Product.Include(p => p.ProductType).Include(p => p.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -197,11 +203,11 @@ namespace Bangazon.Controllers
             return _context.Product.Any(e => e.ProductId == id);
         }
 
-        public async Task<IActionResult> SearchProducts( string searchProduct)
-        {
-            var Prodcuts =  _context.Product.Where(s => s.Title.Contains(searchProduct));
-            return RedirectToAction(nameof(Index)); 
-        }
+        //public async Task<IActionResult> SearchProducts( string searchProduct)
+        //{
+        //    var Prodcuts =  _context.Product.Where(s => s.Title.Contains(searchProduct));
+        //    return RedirectToAction(nameof(Index)); 
+        //}
     
     }
 }
