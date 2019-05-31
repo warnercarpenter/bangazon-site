@@ -39,8 +39,8 @@ namespace Bangazon.Models
 
     public ApplicationUser User { get; set; }
 
-    [Required]
-    [Display(Name="Product Category")]
+    [Required (ErrorMessage = "Please select the Category")]
+        [Display(Name="Product Category")]
     public int ProductTypeId { get; set; }
 
     public ProductType ProductType { get; set; }

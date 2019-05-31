@@ -75,6 +75,14 @@ namespace Bangazon.Controllers
             // addind current dateTime
             product.DateCreated = DateTime.Now;
             ModelState.Remove("UserId");
+            //if product type is 0, give the error message
+            if(product.ProductTypeId == 0)
+            {
+                ViewBag.Message = string.Format("Please select the Category");
+                ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
+                ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
+                return View();
+            }
             if (ModelState.IsValid)
             {
                 // adding current userId
@@ -86,6 +94,7 @@ namespace Bangazon.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
+            //ViewData["ProductTypeId"].Add
             ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
             return View(product);
         }
