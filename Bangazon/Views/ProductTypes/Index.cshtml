@@ -4,37 +4,24 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Label)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div>
+    <h1>Categories</h1>
+    <hr />
+    @foreach (var item in Model)
+    {
+        <h4>
+            @Html.DisplayFor(modelItem => item.Label) (@item.Products.Count())
+        </h4> 
+        @foreach (var product in ViewBag.Products)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Label)
-                </td>
-                @foreach (var product in ViewBag.Products)
+            <ul>
+                @if (product.ProductType.Label == item.Label)
                 {
-                    @if (product.ProductType.Label == item.Label)
-                    {
-                        <td>
-                            <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ProductId">@product.Title</a>
-                        </td>
-                    }
+                    <li>
+                        <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ProductId">@product.Title</a>
+                    </li>
                 }
-            </tr>
+            </ul>
         }
-    </tbody>
-</table>
+    }
+</div>

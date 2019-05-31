@@ -69,7 +69,7 @@ namespace Bangazon.Controllers
 
                     reader.Close();
 
-                    return View(await _context.ProductType.ToListAsync());
+                    return View(await _context.ProductType.Include(pt => pt.Products).ToListAsync());
                 }
             }
         }
