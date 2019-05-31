@@ -41,7 +41,6 @@ namespace Bangazon.Controllers
                 var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
                    .Include(p => p.User)
                    .Where(p => p.Title.Contains(SearchProduct));
-
                 return View(await applicationDbContext1.ToListAsync());
             }
             //if not show all products
