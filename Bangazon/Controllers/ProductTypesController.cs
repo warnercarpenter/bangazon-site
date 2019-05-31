@@ -17,34 +17,35 @@ namespace Bangazon.Controllers
 
         private readonly IConfiguration _config;
         private string _connectionString;
+        private readonly ApplicationDbContext _context;
 
-        public ProductTypesController(IConfiguration config)
+        public ProductTypesController(IConfiguration config, ApplicationDbContext context)
         {
             _config = config;
             _connectionString = _config.GetConnectionString("DefaultConnection");
+            _context = context;
         }
 
         public SqlConnection Connection => new SqlConnection(_config.GetConnectionString("DefaultConnection"));
 
-        private readonly ApplicationDbContext _context;
-
-        public ProductTypesController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         // GET: ProductTypes
         public async Task<IActionResult> Index()
         {
-            var ProductTypeList = await _context.ProductType.ToListAsync();
 
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"select TOP (3) p.Title ProductTitle, p.ProductId, pt.Label ProductType from Product p 
-                                        join ProductType pt on p.ProductTypeId = pt.ProductTypeId ORDER BY pt.Label";
+                    cmd.CommandText = @"WITH MyRowSet
+                                        AS
+                                        (
+                                        SELECT p.Title, p.ProductId, pt.Label, pt.ProductTypeId, p.Price, p.ImagePath,
+                                        ROW_NUMBER() OVER (PARTITION BY pt.ProductTypeId ORDER BY pt.ProductTypeId DESC) AS RowNum 
+                                        from Product p
+                                        join ProductType pt on p.ProductTypeId = pt.ProductTypeId
+                                        )
+                                        SELECT * FROM MyRowSet WHERE RowNum <= 3";
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     List<Product> products = new List<Product>();
@@ -52,19 +53,23 @@ namespace Bangazon.Controllers
                     {
                         Product product = new Product
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                            SlackHandle = reader.GetString(reader.GetOrdinal("SlackHandle")),
-                            CohortId = reader.GetInt32(reader.GetOrdinal("CohortId"))
+                            Title = reader.GetString(reader.GetOrdinal("Title")),
+                            ProductId = reader.GetInt32(reader.GetOrdinal("ProductId")),
+
+                            ProductType = new ProductType {
+                                Label = reader.GetString(reader.GetOrdinal("Label")),
+                                ProductTypeId = reader.GetInt32(reader.GetOrdinal("ProductTypeId"))
+                            }
                         };
 
                         products.Add(product);
                     }
 
+                    ViewBag.Products = products;
+
                     reader.Close();
 
-                    return View(ProductTypeList);
+                    return View(await _context.ProductType.ToListAsync());
                 }
             }
         }

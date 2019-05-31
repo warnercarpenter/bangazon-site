@@ -19,17 +19,22 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Label)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ProductTypeId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ProductTypeId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ProductTypeId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Label)
+                </td>
+                @foreach (var product in ViewBag.Products)
+                {
+                    @if (product.ProductType.Label == item.Label)
+                    {
+                        <td>
+                            <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ProductId">@product.Title</a>
+                        </td>
+                    }
+                }
+            </tr>
+        }
     </tbody>
 </table>

@@ -8,19 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Bangazon.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
         private readonly UserManager<ApplicationUser> _userManager;
-
-        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
-
         public ProductsController(ApplicationDbContext ctx,
                           UserManager<ApplicationUser> userManager)
         {
@@ -40,7 +33,6 @@ namespace Bangazon.Controllers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Product.Include(p => p.ProductType).Include(p => p.User);
-            ViewBag.UserId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -60,7 +52,6 @@ namespace Bangazon.Controllers
             {
                 return NotFound();
             }
-            ViewBag.UserId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             return View(product);
         }
@@ -85,7 +76,7 @@ namespace Bangazon.Controllers
             product.DateCreated = DateTime.Now;
             ModelState.Remove("UserId");
             //if product type is 0, give the error message
-            if(product.ProductTypeId == 0)
+            if (product.ProductTypeId == 0)
             {
                 ViewBag.Message = string.Format("Please select the Category");
                 ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
