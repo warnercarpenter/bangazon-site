@@ -33,8 +33,7 @@
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
+                <input type = "hidden" asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></input>
             </div>
             <div class="form-group">
                 <label asp-for="City" class="control-label"></label>
@@ -48,8 +47,19 @@
             </div>
             <div class="form-group">
                 <label asp-for="ProductTypeId" class="control-label"></label>
-                <select asp-for="ProductTypeId" class ="form-control" asp-items="ViewBag.ProductTypeId"></select>
+                <select asp-for="ProductTypeId" class ="form-control" asp-items="ViewBag.ProductTypeId">
+                    <option value=0>Choose Category</option>
+                </select>
             </div>
+            @*if product type is null displays window message*@
+            @if(ViewBag.Message != null)
+            {
+                <script type="text/javascript">
+                    window.onload = function() {
+                        alert("@ViewBag.Message");
+                    }
+                </script>
+            }
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

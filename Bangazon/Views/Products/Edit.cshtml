@@ -50,7 +50,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="ProductTypeId" class="control-label"></label>
-                <select asp-for="ProductTypeId" class="form-control" asp-items="ViewBag.ProductTypeId"></select>
+                <select asp-for="ProductTypeId" class="form-control" asp-items="ViewBag.ProductTypeId">
+                    <option value="">Choose category</option>
+                </select>
                 <span asp-validation-for="ProductTypeId" class="text-danger"></span>
             </div>
             <div class="form-group">
