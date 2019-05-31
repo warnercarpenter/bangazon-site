@@ -27,6 +27,14 @@ namespace Bangazon.Controllers
             _userManager = userManager;
             _context = ctx;
         }
+        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+
+        private readonly ApplicationDbContext _context;
+
+        //public ProductsController(ApplicationDbContext context)
+        //{
+        //    _context = context;
+        //}
 
         // GET: Products
         public async Task<IActionResult> Index()
@@ -60,6 +68,7 @@ namespace Bangazon.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
+
             ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
             ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
             return View();
@@ -72,13 +81,29 @@ namespace Bangazon.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,DateCreated,Description,Title,Price,Quantity,UserId,City,ImagePath,ProductTypeId")] Product product)
         {
+            // addind current dateTime
+            product.DateCreated = DateTime.Now;
+            ModelState.Remove("UserId");
+            //if product type is 0, give the error message
+            if(product.ProductTypeId == 0)
+            {
+                ViewBag.Message = string.Format("Please select the Category");
+                ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
+                ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
+                return View();
+            }
             if (ModelState.IsValid)
             {
+                // adding current userId
+                var user = await GetCurrentUserAsync();
+                product.UserId = user.Id;
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
+            //ViewData["ProductTypeId"].Add
             ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
             return View(product);
         }
