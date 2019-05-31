@@ -7,11 +7,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
+using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
 
 namespace Bangazon.Controllers
 {
     public class ProductTypesController : Controller
     {
+
+        private readonly IConfiguration _config;
+        private string _connectionString;
+
+        public ProductTypesController(IConfiguration config)
+        {
+            _config = config;
+            _connectionString = _config.GetConnectionString("DefaultConnection");
+        }
+
+        public SqlConnection Connection => new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+
         private readonly ApplicationDbContext _context;
 
         public ProductTypesController(ApplicationDbContext context)
@@ -22,7 +36,37 @@ namespace Bangazon.Controllers
         // GET: ProductTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ProductType.ToListAsync());
+            var ProductTypeList = await _context.ProductType.ToListAsync();
+
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"select TOP (3) p.Title ProductTitle, p.ProductId, pt.Label ProductType from Product p 
+                                        join ProductType pt on p.ProductTypeId = pt.ProductTypeId ORDER BY pt.Label";
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<Product> products = new List<Product>();
+                    while (reader.Read())
+                    {
+                        Product product = new Product
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            SlackHandle = reader.GetString(reader.GetOrdinal("SlackHandle")),
+                            CohortId = reader.GetInt32(reader.GetOrdinal("CohortId"))
+                        };
+
+                        products.Add(product);
+                    }
+
+                    reader.Close();
+
+                    return View(ProductTypeList);
+                }
+            }
         }
 
         // GET: ProductTypes/Details/5

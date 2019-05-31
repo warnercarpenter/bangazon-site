@@ -52,6 +52,7 @@ namespace Bangazon.Controllers
             {
                 return NotFound();
             }
+            ViewBag.UserId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             return View(product);
         }
