@@ -9,6 +9,7 @@ using Bangazon.Data;
 using Bangazon.Models;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Http;
 
 namespace Bangazon.Controllers
 {
