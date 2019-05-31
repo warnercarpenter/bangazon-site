@@ -189,5 +189,13 @@ namespace Bangazon.Controllers
         {
             return _context.Product.Any(e => e.ProductId == id);
         }
+
+        public async Task<IActionResult> SearchProducts( string searchProduct)
+        {
+            var Prodcuts = _context.Product.Where(s => s.Title.Contains(searchProduct));
+
+            return View(index);
+        }
+    }
     }
 }

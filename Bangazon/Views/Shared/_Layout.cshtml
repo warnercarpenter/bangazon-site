@@ -44,6 +44,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li>
+                            @using (Html.BeginForm("Index", "Products"))
+                            { 
+                                <input type="text" name="searchProduct"/>
+                            }
+                        </li>
                     </ul>
                 </div>
             </div>
