@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Collections;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bangazon.Controllers
 {
@@ -30,8 +32,19 @@ namespace Bangazon.Controllers
         //}
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        [Authorize]
+        public async Task<IActionResult> Index(string SearchProduct)
         {
+            // if searchBox is not empty then filter product list
+            if (SearchProduct != null)
+            {
+                var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
+                   .Include(p => p.User)
+                   .Where(p => p.Title.Contains(SearchProduct));
+
+                return View(await applicationDbContext1.ToListAsync());
+            }
+            //if not show all products
             var applicationDbContext = _context.Product.Include(p => p.ProductType).Include(p => p.User);
             return View(await applicationDbContext.ToListAsync());
         }
