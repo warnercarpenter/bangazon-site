@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Collections;
 
 namespace Bangazon.Controllers
 {
@@ -30,9 +31,15 @@ namespace Bangazon.Controllers
         //}
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchProduct)
         {
             var applicationDbContext = _context.Product.Include(p => p.ProductType).Include(p => p.User);
+            if (SearchProduct != null)
+            {
+                applicationDbContext = _context.Product.Include(p => p.ProductType)
+                    .Include(p => p.User)
+                    .Where(p=> p.Title.Contains(SearchProduct));
+            }
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -192,10 +199,9 @@ namespace Bangazon.Controllers
 
         public async Task<IActionResult> SearchProducts( string searchProduct)
         {
-            var Prodcuts = _context.Product.Where(s => s.Title.Contains(searchProduct));
-
-            return View(index);
+            var Prodcuts =  _context.Product.Where(s => s.Title.Contains(searchProduct));
+            return RedirectToAction(nameof(Index)); 
         }
-    }
+    
     }
 }

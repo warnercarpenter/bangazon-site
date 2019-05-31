@@ -45,9 +45,9 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li>
-                            @using (Html.BeginForm("Index", "Products"))
+                            @using (Html.BeginForm("SearchProducts(SearchProduct)", "Products"))
                             { 
-                                <input type="text" name="searchProduct"/>
+                                <input type="text" id="SearchProduct" name="searchProduct"/>
                             }
                         </li>
                     </ul>
