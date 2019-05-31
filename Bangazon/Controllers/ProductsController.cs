@@ -35,12 +35,14 @@ namespace Bangazon.Controllers
         [Authorize]
         public async Task<IActionResult> Index(string SearchProduct)
         {
+            var currentUser = await GetCurrentUserAsync();
+            ViewBag.UserId = currentUser.Id;
             // if searchBox is not empty then filter product list
             if (SearchProduct != null)
             {
                 var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
                    .Include(p => p.User)
-                   .Where(p => p.Title.Contains(SearchProduct))
+                   .Where(p => p.Title.Contains(SearchProduct) || p.City.Contains(SearchProduct))
                    .OrderByDescending(p => p.DateCreated);
 
                 return View(await applicationDbContext1.ToListAsync());
