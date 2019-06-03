@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bangazon.Controllers
 {
@@ -34,16 +35,26 @@ namespace Bangazon.Controllers
             return View();
         }
 
-        // GET: Profile/Details/5
-        public ActionResult Details(int id)
+        public ActionResult SettingsIndex()
         {
             return View();
         }
 
+
+        public async Task<IActionResult> ViewPaymentTypes()
+        {
+            var applicationDbContext = _context.PaymentType.Include(p => p.User);
+            return View(await applicationDbContext.ToListAsync());
+        }
+
+
+
+
+
         // GET: Profile/CreatePaymentType
         public IActionResult CreatePaymentType()
         {
-            
+
             return View();
         }
 
@@ -72,50 +83,43 @@ namespace Bangazon.Controllers
             return View(paymenttype);
         }
 
-        // GET: Profile/Edit/5
-        public ActionResult Edit(int id)
+        //Goes to confirmation page to delete payment type
+        public async Task<IActionResult> DeletePaymentType(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var paymenttype = await _context.PaymentType
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(m => m.PaymentTypeId == id);
+            if (paymenttype == null)
+            {
+                return NotFound();
+            }
+
+            return View(paymenttype);
         }
 
-        // POST: Profile/Edit/5
-        [HttpPost]
+        // POST: Products/DeletePaymentType/5
+        //Deletes a PaymentType
+        [HttpPost, ActionName("DeletePaymentType")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> DeletePaymentTypeConfirmed(int id)
         {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var paymenttype = await _context.PaymentType.FindAsync(id);
+            _context.PaymentType.Remove(paymenttype);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Profile/Delete/5
-        public ActionResult Delete(int id)
+        private bool PaymentTypeExists(int id)
         {
-            return View();
-        }
-
-        // POST: Profile/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return _context.PaymentType.Any(e => e.PaymentTypeId == id);
         }
     }
+
 }
+
+

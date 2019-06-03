@@ -40,11 +40,13 @@ namespace Bangazon.Controllers
             {
                 var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
                    .Include(p => p.User)
-                   .Where(p => p.Title.Contains(SearchProduct));
+
+                   .Where(p => p.Title.Contains(SearchProduct))
+                   .OrderByDescending(p => p.DateCreated);
                 return View(await applicationDbContext1.ToListAsync());
             }
             //if not show all products
-            var applicationDbContext = _context.Product.Include(p => p.ProductType).Include(p => p.User);
+            var applicationDbContext = _context.Product.Include(p => p.ProductType).Include(p => p.User).OrderByDescending(p => p.DateCreated).Take(20);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -213,6 +215,5 @@ namespace Bangazon.Controllers
             return View(await applicationDbContext1.ToListAsync());
 
         }
-        DeleteMyProduct
     }
 }

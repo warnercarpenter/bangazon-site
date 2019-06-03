@@ -10,6 +10,7 @@ using Bangazon.Models;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 
+
 namespace Bangazon.Controllers
 {
     public class ProductTypesController : Controller
@@ -19,7 +20,8 @@ namespace Bangazon.Controllers
         private string _connectionString;
         private readonly ApplicationDbContext _context;
 
-        public ProductTypesController(IConfiguration config, ApplicationDbContext context)
+        public ProductTypesController(IConfiguration config,
+            ApplicationDbContext context)
         {
             _config = config;
             _connectionString = _config.GetConnectionString("DefaultConnection");
@@ -56,7 +58,8 @@ namespace Bangazon.Controllers
                             Title = reader.GetString(reader.GetOrdinal("Title")),
                             ProductId = reader.GetInt32(reader.GetOrdinal("ProductId")),
 
-                            ProductType = new ProductType {
+                            ProductType = new ProductType
+                            {
                                 Label = reader.GetString(reader.GetOrdinal("Label")),
                                 ProductTypeId = reader.GetInt32(reader.GetOrdinal("ProductTypeId"))
                             }
@@ -74,29 +77,24 @@ namespace Bangazon.Controllers
             }
         }
 
-        // GET: ProductTypes/Details/5
+        // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            //using _context to query the database
             var productType = await _context.ProductType
-                .FirstOrDefaultAsync(m => m.ProductTypeId == id);
-            if (productType == null)
-            {
-                return NotFound();
-            }
+                //using singleordefaultasync allows us to get one category type
+                .SingleOrDefaultAsync(p => p.ProductTypeId == id);
 
+            var productList = _context.Product
+                //the where is getting all of the products related to one category
+                .Where(p => p.ProductType.ProductTypeId == productType.ProductTypeId)
+                .OrderByDescending(p => p.DateCreated);
+            //ViewData is used to access our product list
+            ViewData["productList"] = productList;
             return View(productType);
         }
 
-        // GET: ProductTypes/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+
 
         // POST: ProductTypes/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
