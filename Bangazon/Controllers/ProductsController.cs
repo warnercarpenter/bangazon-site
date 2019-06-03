@@ -26,10 +26,7 @@ namespace Bangazon.Controllers
 
         private readonly ApplicationDbContext _context;
 
-        //public ProductsController(ApplicationDbContext context)
-        //{
-        //    _context = context;
-        //}
+       
 
         // GET: Products
         [Authorize]
@@ -217,5 +214,22 @@ namespace Bangazon.Controllers
                    .Where(p => p.UserId == user.Id);
             return View(await applicationDbContext1.ToListAsync());
         }
+        //public async Task<IActionResult> AddToCart(int id)
+        //{
+        //    Order order = new Order();
+        //    order.DateCreated = DateTime.Now;
+        //    ModelState.Remove("UserId");
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(order);
+        //        await _context.SaveChangesAsync();
+        //        OrderProduct orderProduct = new OrderProduct();
+        //        orderProduct.OrderId = order.OrderId;
+        //        orderProduct.ProductId = id;
+        //        _context.Add(orderProduct);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //}
     }
 }
