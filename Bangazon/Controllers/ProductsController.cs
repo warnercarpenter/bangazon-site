@@ -42,7 +42,7 @@ namespace Bangazon.Controllers
             {
                 var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
                    .Include(p => p.User)
-                   .Where(p => p.Title.Contains(SearchProduct) || p.City.Contains(SearchProduct))
+                   .Where(p => p.Title.Contains(SearchProduct) || p.City.ToLower() == SearchProduct.ToLower())
                    .OrderByDescending(p => p.DateCreated);
 
                 return View(await applicationDbContext1.ToListAsync());
