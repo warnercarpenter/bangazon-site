@@ -10,7 +10,11 @@
     @foreach (var item in Model)
     {
         <h4>
+            @*this creates the hyperlink on each category*@
+            <a asp-action="Details" asp-route-id="@item.ProductTypeId">
+
             @Html.DisplayFor(modelItem => item.Label) (@item.Products.Count())
+            </a>
         </h4> 
         @foreach (var product in ViewBag.Products)
         {
