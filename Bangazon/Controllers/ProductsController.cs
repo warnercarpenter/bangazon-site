@@ -164,7 +164,7 @@ namespace Bangazon.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyProducts));
             }
             ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
             ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
@@ -199,7 +199,7 @@ namespace Bangazon.Controllers
             var product = await _context.Product.FindAsync(id);
             _context.Product.Remove(product);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MyProducts));
         }
 
         private bool ProductExists(int id)
@@ -211,13 +211,11 @@ namespace Bangazon.Controllers
         public async Task<IActionResult> MyProducts()
         {
             var user = await GetCurrentUserAsync();
-
+            //get only the user's (who is logged in) products 
             var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
                    .Include(p => p.User)
                    .Where(p => p.UserId == user.Id);
             return View(await applicationDbContext1.ToListAsync());
-
         }
-        
     }
 }
