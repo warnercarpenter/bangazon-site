@@ -49,9 +49,7 @@
     </dl>
 </div>
 <div>
-    @* <a asp-action="Create" asp-route-id="@Model.ProductId">Add To Cart</a>*@
     <a href="@Url.Action("AddtoCart", "Orders", new { prodId =Model.ProductId })">
     <input type ="submit" value="Add to Cart" /> </a>
-    @*asp-area="" asp-controller="Orders" asp-action="AddToCart" >Add To Cart</a>*@
     <a href='javascript:history.go(-1)'>Back</a>
 </div>
