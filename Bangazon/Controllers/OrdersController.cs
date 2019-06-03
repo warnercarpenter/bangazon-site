@@ -182,7 +182,6 @@ namespace Bangazon.Controllers
             return View(orderProduct);
         }
 
-        // POST: Orders/Delete/5
         [HttpPost, ActionName("DeleteOrderProduct")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteOrderProductConfirmed(int id)
