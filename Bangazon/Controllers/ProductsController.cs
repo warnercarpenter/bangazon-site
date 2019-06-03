@@ -201,5 +201,18 @@ namespace Bangazon.Controllers
         {
             return _context.Product.Any(e => e.ProductId == id);
         }
+
+        // GET: Products/MyProducts
+        public async Task<IActionResult> MyProducts()
+        {
+            var user = await GetCurrentUserAsync();
+
+            var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
+                   .Include(p => p.User)
+                   .Where(p => p.UserId == user.Id);
+            return View(await applicationDbContext1.ToListAsync());
+
+        }
+        DeleteMyProduct
     }
 }
