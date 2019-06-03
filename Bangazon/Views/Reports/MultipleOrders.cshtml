@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewData["Title"] = "MultipleOrders";
+}
+
+<h1>Multiple Orders</h1>
+
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    First Name:
+                </th>
+                <th>
+                    Last Name:
+                </th>
+                <th>
+                    Open Orders:
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in ViewBag.Users)
+            {
+                <tr>
+                    <td>
+                        @user.FirstName
+                    </td>
+                    <td>
+                        @user.LastName
+                    </td>
+                    <td>
+                        @user.Orders.Count
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a asp-action="Index">Back</a>
+</div>
