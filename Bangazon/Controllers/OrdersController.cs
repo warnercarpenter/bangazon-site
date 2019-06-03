@@ -7,17 +7,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Bangazon.Controllers
 {
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(ApplicationDbContext ctx,
+                          UserManager<ApplicationUser> userManager)
         {
-            _context = context;
+            _userManager = userManager;
+            _context = ctx;
         }
+        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         // GET: Orders
         public async Task<IActionResult> Index()
@@ -51,9 +56,10 @@ namespace Bangazon.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
-            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentType, "PaymentTypeId", "AccountNumber");
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
-            return View();
+            //ViewData["PaymentTypeId"] = new SelectList(_context.PaymentType, "PaymentTypeId", "AccountNumber");
+            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
+            Order order = new Order();
+            return View(order);
         }
 
         // POST: Orders/Create
@@ -61,17 +67,62 @@ namespace Bangazon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderId,DateCreated,DateCompleted,UserId,PaymentTypeId")] Order order)
+        public async Task<IActionResult> Create(Order order, int ProdId )
         {
+            order.DateCreated = DateTime.Now;
+            ModelState.Remove("UserId");
             if (ModelState.IsValid)
             {
                 _context.Add(order);
                 await _context.SaveChangesAsync();
+                OrderProduct orderProduct = new OrderProduct();
+                orderProduct.OrderId = order.OrderId;
+                orderProduct.ProductId = ProdId;
+                _context.Add(orderProduct);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentType, "PaymentTypeId", "AccountNumber", order.PaymentTypeId);
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", order.UserId);
             return View(order);
+        }
+
+        public async Task<IActionResult> AddToCart(int prodId)
+        {
+            var user = await GetCurrentUserAsync();
+            var userId = user.Id;
+
+            Order order = null;
+            //check user has any open order
+            if (_context.Order.Any(e => e.UserId == userId && e.PaymentTypeId == null) == false)
+            {
+                //if not create a new order 
+                order = new Order();
+                order.DateCreated = DateTime.Now;
+                order.UserId = userId;
+                _context.Add(order);
+                await _context.SaveChangesAsync();
+                //OrderProduct orderProduct = new OrderProduct();
+                //orderProduct.OrderId = order.OrderId;
+                //orderProduct.ProductId = prodId;
+                //_context.Add(orderProduct);
+                //await _context.SaveChangesAsync();
+
+                ////redirect to index of Products Controller
+                //return RedirectToAction(nameof(Index), "Products");
+            }
+            else
+            {
+                order = _context.Order
+                    .Where(e => e.UserId == userId && e.DateCompleted == null)
+                       .FirstOrDefault<Order>();
+            }
+                OrderProduct orderProduct = new OrderProduct();
+                orderProduct.OrderId = order.OrderId;
+                orderProduct.ProductId = prodId;
+                _context.Add(orderProduct);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index), "Products");
         }
 
         // GET: Orders/Edit/5
