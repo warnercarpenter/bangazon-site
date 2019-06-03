@@ -4,50 +4,43 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DateCreated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateCompleted)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PaymentType)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateCreated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateCompleted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PaymentType.AccountNumber)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.OrderId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.OrderId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.OrderId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div>
+        @foreach (var item in Model)
+        {
+            <h1>Shopping Cart (@item.OrderProducts.Count() items)</h1>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Title:
+                        </th>
+                        <th>
+                            Price:
+                        </th>
+
+                        <th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var orderProduct in item.OrderProducts)
+                    {
+                        <tr>
+                            <td>
+                                @orderProduct.Product.Title
+                            </td>
+                            <td>
+                                @orderProduct.Product.Price
+                            </td>
+                            <td>
+                                <a asp-action="DeleteOrderProduct" asp-route-id="@orderProduct.OrderProductId">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <h6>Total: $@item.OrderProducts.Sum(op => op.Product.Price)</h6>
+            <div><a>Confirm Order</a> | <a>Cancel Order</a></div>
+        }
+    </div>
