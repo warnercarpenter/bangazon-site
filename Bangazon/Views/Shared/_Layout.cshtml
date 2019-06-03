@@ -41,10 +41,13 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Index">Profile</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="MyProducts">My Products</a>
+                        </li>
                         <li>
                             @using (Html.BeginForm("Index", "Products"))
-                            { 
-                                <input type="text" id="SearchProduct" name="searchProduct"/>
+                            {
+                                <input type="text" id="SearchProduct" name="searchProduct" />
                             }
                         </li>
                     </ul>
