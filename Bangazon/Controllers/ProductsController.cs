@@ -100,6 +100,13 @@ namespace Bangazon.Controllers
                 ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
                 return View();
             }
+            if (product.Price > 10000)
+            {
+                ViewBag.Message = string.Format("Price cannot exceed $10,000.");
+                ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
+                ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
+                return View();
+            }
             if (ModelState.IsValid)
             {
                 // adding current userId
