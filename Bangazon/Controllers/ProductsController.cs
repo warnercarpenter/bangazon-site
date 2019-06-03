@@ -136,6 +136,7 @@ namespace Bangazon.Controllers
             {
                 return NotFound();
             }
+
             ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
             ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
             return View(product);
@@ -152,7 +153,13 @@ namespace Bangazon.Controllers
             {
                 return NotFound();
             }
-
+            if (product.Price > 10000)
+            {
+                ViewBag.Message = string.Format("Price cannot exceed $10,000.");
+                ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
+                ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
+                return View();
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -173,6 +180,7 @@ namespace Bangazon.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+           
             ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
             ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
             return View(product);
