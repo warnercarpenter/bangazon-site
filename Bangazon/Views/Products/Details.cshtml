@@ -49,10 +49,10 @@
     </dl>
 </div>
 <div>
-    @if (ViewBag.UserId == Model.UserId)
+    @*@if (ViewBag.UserId == Model.UserId)
     {
         <a asp-action="Edit" asp-route-id="@Model.ProductId">Edit</a>
-    }
+    }*@
     <a asp-action="AddToCart" asp-route-id="@Model.ProductId">Add To Cart</a>
     <a href='javascript:history.go(-1)'>Back</a>
 </div>
