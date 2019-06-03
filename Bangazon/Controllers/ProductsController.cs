@@ -42,9 +42,10 @@ namespace Bangazon.Controllers
             {
                 var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
                    .Include(p => p.User)
-                   .Where(p => p.Title.Contains(SearchProduct) || p.City.ToLower() == SearchProduct.ToLower())
-                   .OrderByDescending(p => p.DateCreated);
 
+                   .Where(p => p.Title.Contains(SearchProduct) || p.City.ToLower() == SearchProduct.ToLower())
+
+                   .OrderByDescending(p => p.DateCreated);
                 return View(await applicationDbContext1.ToListAsync());
             }
             //if not show all products
@@ -205,5 +206,18 @@ namespace Bangazon.Controllers
         {
             return _context.Product.Any(e => e.ProductId == id);
         }
+
+        // GET: Products/MyProducts
+        public async Task<IActionResult> MyProducts()
+        {
+            var user = await GetCurrentUserAsync();
+
+            var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
+                   .Include(p => p.User)
+                   .Where(p => p.UserId == user.Id);
+            return View(await applicationDbContext1.ToListAsync());
+
+        }
+        
     }
 }
