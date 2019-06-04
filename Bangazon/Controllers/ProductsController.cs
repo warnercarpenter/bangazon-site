@@ -100,12 +100,12 @@ namespace Bangazon.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,DateCreated,Description,Title,Price,Quantity,UserId,City,ImagePath,ProductTypeId, ImageFile")] UploadImageViewModel viewproduct )
         {
-            viewproduct.product = new Product();
+            viewproduct.product  = new Product();
             // addind current dateTime
             viewproduct.product.DateCreated = DateTime.Now;
             ModelState.Remove("UserId");
             //if product type is 0, give the error message
-            viewproduct.product.Description = "Description";
+            viewproduct.product.Description = "";
             viewproduct.product.Title = "Title";
             viewproduct.product.Price = 1;
             viewproduct.product.Quantity = 1;
