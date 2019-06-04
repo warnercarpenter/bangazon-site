@@ -29,26 +29,16 @@
                             <th>
                             <th></th>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var orderProduct in item.OrderProducts)
-                        {
-                            <tr>
-                                <td>
-                                    @orderProduct.Product.Title
-                                </td>
-                                <td>
-                                    $@orderProduct.Product.Price
-                                </td>
-                                <td>
-                                    <a asp-action="DeleteOrderProduct" asp-route-id="@orderProduct.OrderProductId">Delete</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-                <h6>Total: $@item.OrderProducts.Sum(op => op.Product.Price)</h6>
-                <div><a>Confirm Order</a> | <a>Cancel Order</a></div>
-            }
+                    }
+                </tbody>
+            </table>
+            <h6>Total: $@item.OrderProducts.Sum(op => op.Product.Price)</h6>
+            <div><a asp-action="Delete">
+                    <input class="btn btn-info" type="submit" value="Confirm Order" />
+                </a> 
+                <a asp-controller="Orders" asp-action="Delete" asp-route-id="@item.OrderId">
+                    <input class="btn btn-danger"  type="submit" value="Cancel Order" />
+                </a>
+            </div>
         }
     </div>
