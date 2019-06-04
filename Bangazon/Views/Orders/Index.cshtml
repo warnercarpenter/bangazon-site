@@ -5,40 +5,56 @@
 }
 
 
-    <div>
-        @if (Model.Count() < 1)
+<div>
+    @if (Model.Count() < 1)
+    {
+        <h1>Shopping Cart</h1>
+        <div>Oops! You do not have an active order. Add a product to your cart to get started</div>
+    }
+    else
+    {
+        @foreach (var item in Model)
         {
-            <h1>Shopping Cart</h1>
-            <div>Oops! You do not have an active order. Add a product to your cart to get started</div>
-        }
-        else
-        {
-            @foreach (var item in Model)
-            {
-                <h1>Shopping Cart (@item.OrderProducts.Count() items)</h1>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>
-                                Title:
-                            </th>
-                            <th>
-                                Price:
-                            </th>
+            <h1>Shopping Cart (@item.OrderProducts.Count() items)</h1>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Title:
+                        </th>
+                        <th>
+                            Price:
+                        </th>
 
-                            <th>
-                            <th></th>
+                        <th>
+                        <th></th>
+                    </tr>
+                <tbody>
+                    @foreach (var orderProduct in item.OrderProducts)
+                    {
+                        <tr>
+                            <td>
+                                @orderProduct.Product.Title
+                            </td>
+                            <td>
+                                $@orderProduct.Product.Price
+                            </td>
+                            <td>
+                                <a asp-action="DeleteOrderProduct" asp-route-id="@orderProduct.OrderProductId">Delete</a>
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
             <h6>Total: $@item.OrderProducts.Sum(op => op.Product.Price)</h6>
-            <div><a asp-action="Delete">
+            <div>
+                <a asp-action="Delete">
                     <input class="btn btn-info" type="submit" value="Confirm Order" />
-                </a> 
+                </a>
                 <a asp-controller="Orders" asp-action="Delete" asp-route-id="@item.OrderId">
-                    <input class="btn btn-danger"  type="submit" value="Cancel Order" />
+                    <input class="btn btn-danger" type="submit" value="Cancel Order" />
                 </a>
             </div>
         }
-    </div>
+    }
+</div>
