@@ -268,7 +268,25 @@ namespace Bangazon.Controllers
             //get only the user's (who is logged in) products 
             var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
                    .Include(p => p.User)
-                   .Where(p => p.UserId == user.Id);
+                   .Include(p => p.OrderProducts)
+                   .ThenInclude(op => op.Order)
+                   .Where(p => p.UserId == user.Id)
+                   .Select(p => new Product
+                   {
+                       ProductId = p.ProductId,
+                       DateCreated = p.DateCreated,
+                       Description = p.Description,
+                       Title = p.Title,
+                       Price = p.Price,
+                       Quantity = p.Quantity,
+                       UserId = p.UserId,
+                       City = p.City,
+                       ImagePath = p.ImagePath,
+                       ProductTypeId = p.ProductTypeId,
+                       OrderProducts = p.OrderProducts.Where(op => op.Order.DateCompleted != null).ToList()
+                   });
+                
+
             return View(await applicationDbContext1.ToListAsync());
         }
         
