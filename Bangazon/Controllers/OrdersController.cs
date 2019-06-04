@@ -194,9 +194,6 @@ namespace Bangazon.Controllers
             var order = await _context.Order
                 .Include(o => o.PaymentType)
                 .Include(o => o.User)
-                .Include(o=> o.OrderProducts)
-                .ThenInclude(o=>o.Product)
-                .ThenInclude(o=>o.ProductType)
                 .FirstOrDefaultAsync(m => m.OrderId == id);
             if (order == null)
             {
@@ -211,10 +208,7 @@ namespace Bangazon.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = _context.Order.Include(o => o.OrderProducts)
-                .SingleOrDefault(o => o.OrderId == id);
-            var productList = order.OrderProducts.ToList();
-            _context.OrderProduct.RemoveRange(productList);
+            var order = await _context.Order.FindAsync(id);
             _context.Order.Remove(order);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -244,7 +238,7 @@ namespace Bangazon.Controllers
 
         [HttpPost, ActionName("DeleteOrderProduct")]
         [ValidateAntiForgeryToken]
-        public async void  DeleteOrderProductConfirmed(int id)
+        public async Task<IActionResult> DeleteOrderProductConfirmed(int id)
         {
             var orderProduct = await _context.OrderProduct.FindAsync(id);
             var orderToCheck = await _context.Order.Include(o => o.OrderProducts).FirstOrDefaultAsync(o => o.OrderId == orderProduct.OrderId);
@@ -254,7 +248,7 @@ namespace Bangazon.Controllers
                 _context.Order.Remove(orderToCheck);
             }
             await _context.SaveChangesAsync();
-            //return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index));
         }
     }
 }
