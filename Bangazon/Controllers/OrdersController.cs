@@ -241,7 +241,12 @@ namespace Bangazon.Controllers
         public async Task<IActionResult> DeleteOrderProductConfirmed(int id)
         {
             var orderProduct = await _context.OrderProduct.FindAsync(id);
+            var orderToCheck = await _context.Order.Include(o => o.OrderProducts).FirstOrDefaultAsync(o => o.OrderId == orderProduct.OrderId);
             _context.OrderProduct.Remove(orderProduct);
+            if (orderToCheck.OrderProducts.Count() == 1)
+            {
+                _context.Order.Remove(orderToCheck);
+            }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

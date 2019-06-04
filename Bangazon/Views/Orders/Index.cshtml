@@ -5,49 +5,50 @@
 }
 
 
-<div>
-    @if (Model.Count() < 1)
-    {
-        <div>Oops! You do not have an active order. Add a product to your cart to get started</div>
-    }
-    else
-    {
-        @foreach (var item in Model)
+    <div>
+        @if (Model.Count() < 1)
         {
-            <h1>Shopping Cart (@item.OrderProducts.Count() items)</h1>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            Title:
-                        </th>
-                        <th>
-                            Price:
-                        </th>
-
-                        <th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var orderProduct in item.OrderProducts)
-                    {
-                        <tr>
-                            <td>
-                                @orderProduct.Product.Title
-                            </td>
-                            <td>
-                                $@orderProduct.Product.Price
-                            </td>
-                            <td>
-                                <a asp-action="DeleteOrderProduct" asp-route-id="@orderProduct.OrderProductId">Delete</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <h6>Total: $@item.OrderProducts.Sum(op => op.Product.Price)</h6>
-            <div><a>Confirm Order</a> | <a>Cancel Order</a></div>
+            <h1>Shopping Cart</h1>
+            <div>Oops! You do not have an active order. Add a product to your cart to get started</div>
         }
-    }
-</div>
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <h1>Shopping Cart (@item.OrderProducts.Count() items)</h1>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Title:
+                            </th>
+                            <th>
+                                Price:
+                            </th>
+
+                            <th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var orderProduct in item.OrderProducts)
+                        {
+                            <tr>
+                                <td>
+                                    @orderProduct.Product.Title
+                                </td>
+                                <td>
+                                    $@orderProduct.Product.Price
+                                </td>
+                                <td>
+                                    <a asp-action="DeleteOrderProduct" asp-route-id="@orderProduct.OrderProductId">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <h6>Total: $@item.OrderProducts.Sum(op => op.Product.Price)</h6>
+                <div><a>Confirm Order</a> | <a>Cancel Order</a></div>
+            }
+        }
+    </div>
