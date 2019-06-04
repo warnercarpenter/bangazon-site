@@ -82,7 +82,7 @@ namespace Bangazon.Controllers
 
             return View(product);
         }
-
+        [Authorize]
         // GET: Products/Create
         public IActionResult Create()
         {

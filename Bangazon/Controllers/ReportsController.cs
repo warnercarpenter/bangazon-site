@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bangazon.Controllers
 {
@@ -19,6 +20,7 @@ namespace Bangazon.Controllers
             _context = context;
         }
 
+        [Authorize]
         // GET: Orders
         public async Task<IActionResult> Index()
         {

@@ -19,6 +19,7 @@ namespace Bangazon.Controllers
             _context = context;
         }
 
+
         // GET: PaymentTypes
         public async Task<IActionResult> Index()
         {

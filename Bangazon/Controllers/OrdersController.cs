@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bangazon.Controllers
 {
@@ -24,6 +25,8 @@ namespace Bangazon.Controllers
         }
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
+
+        [Authorize]
         // GET: Orders
         public async Task<IActionResult> Index()
         {
