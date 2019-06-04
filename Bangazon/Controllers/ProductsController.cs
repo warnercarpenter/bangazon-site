@@ -10,17 +10,28 @@ using Bangazon.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Collections;
 using Microsoft.AspNetCore.Authorization;
+using System.IO;
+using Bangazon.Models.ProductViewModels;
+using Microsoft.AspNetCore.Http;
+
+using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Bangazon.Controllers
 {
     public class ProductsController : Controller
+
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
+
         private readonly UserManager<ApplicationUser> _userManager;
         public ProductsController(ApplicationDbContext ctx,
-                          UserManager<ApplicationUser> userManager)
+                          UserManager<ApplicationUser> userManager,
+                          IHostingEnvironment hostingEnvironment)
         {
             _userManager = userManager;
             _context = ctx;
+            _hostingEnvironment = hostingEnvironment;
         }
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
@@ -73,10 +84,11 @@ namespace Bangazon.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-
+            UploadImageViewModel viewproduct = new UploadImageViewModel();
+            viewproduct.product = new Product();
             ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
             ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
-            return View();
+            return View(viewproduct);
         }
 
         // POST: Products/Create
@@ -84,20 +96,28 @@ namespace Bangazon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,DateCreated,Description,Title,Price,Quantity,UserId,City,ImagePath,ProductTypeId")] Product product)
+        public async Task<IActionResult> Create( UploadImageViewModel viewproduct )
         {
-            // addind current dateTime
-            product.DateCreated = DateTime.Now;
-            ModelState.Remove("UserId");
+            
+            // add current dateTime
+            viewproduct.product.DateCreated = DateTime.Now;
+            ModelState.Remove("product.UserId");
+
+            // adding current userId
+            var user = await GetCurrentUserAsync();
+            viewproduct.product.UserId = user.Id;
+           
             //if product type is 0, give the error message
-            if (product.ProductTypeId == 0)
+            
+            if (viewproduct.product.ProductTypeId == 0)
             {
                 ViewBag.Message = string.Format("Please select the Category");
+
                 ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
                 ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
                 return View();
             }
-            if (product.Price > 10000)
+            if (viewproduct.product.Price > 10000)
             {
                 ViewBag.Message = string.Format("Price cannot exceed $10,000.");
                 ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
@@ -106,18 +126,38 @@ namespace Bangazon.Controllers
             }
             if (ModelState.IsValid)
             {
-                // adding current userId
-                var user = await GetCurrentUserAsync();
-                product.UserId = user.Id;
+                
 
-                _context.Add(product);
+                if (viewproduct.ImageFile.Length > 0)
+                {
+                    // don't rely on or trust the FileName property without validation
+                    //**Warning**: The following code uses `GetTempFileName`, which throws
+                    // an `IOException` if more than 65535 files are created without 
+                    // deleting previous temporary files. A real app should either delete
+                    // temporary files or use `GetTempPath` and `GetRandomFileName` 
+                    // to create temporary file names.
+                    var fileName = Path.GetFileName(viewproduct.ImageFile.FileName);
+                    Path.GetTempFileName();
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", fileName);
+                    //var filePath = Path.GetTempFileName();
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await viewproduct.ImageFile.CopyToAsync(stream);
+                        // validate file, then move to CDN or public folder
+                    }
+
+                    viewproduct.product.ImagePath = viewproduct.ImageFile.FileName;
+                }
+                
+
+              _context.Add(viewproduct.product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
+            ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", viewproduct.product.ProductTypeId);
             //ViewData["ProductTypeId"].Add
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
-            return View(product);
+            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", viewproduct.product.UserId);
+            return View(viewproduct);
         }
 
         // GET: Products/Edit/5
