@@ -189,6 +189,7 @@ namespace Bangazon.Controllers
             }
 
             var order = await _context.Order
+                .Include(o=> o.OrderProducts)
                 .Include(o => o.PaymentType)
                 .Include(o => o.User)
                 .FirstOrDefaultAsync(m => m.OrderId == id);

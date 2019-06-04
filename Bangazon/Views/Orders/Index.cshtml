@@ -41,8 +41,12 @@
                 </tbody>
             </table>
             <h6>Total: $@item.OrderProducts.Sum(op => op.Product.Price)</h6>
-            <div><a><input type="submit" value="Confirm Order" /></a> | 
-                <a><input type="submit" value="Cancel Order" /></a>
+            <div><a asp-action="Delete">
+                    <input class="btn btn-info" type="submit" value="Confirm Order" />
+                </a> 
+                <a asp-controller="Orders" asp-action="Delete">
+                    <input class="btn btn-danger"  type="submit" value="Cancel Order" />
+                </a>
             </div>
         }
     </div>
