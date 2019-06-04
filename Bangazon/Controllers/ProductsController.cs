@@ -96,19 +96,21 @@ namespace Bangazon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,DateCreated,Description,Title,Price,Quantity,UserId,City,ImagePath,ProductTypeId, ImageFile")] UploadImageViewModel viewproduct )
+        public async Task<IActionResult> Create( UploadImageViewModel viewproduct )
         {
-            viewproduct.product  = new Product();
+            //viewproduct.product  = new Product();
             // addind current dateTime
             viewproduct.product.DateCreated = DateTime.Now;
-            ModelState.Remove("UserId");
+            ModelState.Remove("product.UserId");
+                var user = await GetCurrentUserAsync();
+                viewproduct.product.UserId = user.Id;
             //if product type is 0, give the error message
-            viewproduct.product.Description = "";
-            viewproduct.product.Title = "Title";
-            viewproduct.product.Price = 1;
-            viewproduct.product.Quantity = 1;
-            viewproduct.product.City = "City";
-            viewproduct.product.ProductTypeId = 1;
+            //viewproduct.product.Description = "";
+            //viewproduct.product.Title = "Title";
+            //viewproduct.product.Price = 1;
+            //viewproduct.product.Quantity = 1;
+            //viewproduct.product.City = "City";
+            //viewproduct.product.ProductTypeId = 1;
             if (viewproduct.product.ProductTypeId == 0)
             {
                 ViewBag.Message = string.Format("Please select the Category");
@@ -117,7 +119,7 @@ namespace Bangazon.Controllers
                 ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
                 return View();
             }
-            if (product.Price > 10000)
+            if (viewproduct.product.Price > 10000)
             {
                 ViewBag.Message = string.Format("Price cannot exceed $10,000.");
                 ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
@@ -127,8 +129,6 @@ namespace Bangazon.Controllers
             if (ModelState.IsValid)
             {
                 // adding current userId
-                var user = await GetCurrentUserAsync();
-                viewproduct.product.UserId = user.Id;
 
                 if (viewproduct.ImageFile.Length > 0)
                 {
