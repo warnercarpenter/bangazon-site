@@ -44,7 +44,7 @@
             <div><a asp-action="Delete">
                     <input class="btn btn-info" type="submit" value="Confirm Order" />
                 </a> 
-                <a asp-controller="Orders" asp-action="Delete">
+                <a asp-controller="Orders" asp-action="Delete" asp-route-id="@item.OrderId">
                     <input class="btn btn-danger"  type="submit" value="Cancel Order" />
                 </a>
             </div>
