@@ -42,6 +42,8 @@ namespace Bangazon.Controllers
 
        
 
+
+
         public async Task<IActionResult> ViewPaymentTypes()
         {
             var applicationDbContext = _context.PaymentType.Include(p => p.User);
