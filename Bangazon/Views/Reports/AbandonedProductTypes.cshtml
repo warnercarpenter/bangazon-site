@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Bangazon.Models.ProductType>
+
+@{
+    ViewData["Title"] = "AbandonedProductTypes";
+}
+
+<h1>Abondoned Product Types</h1>
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Product Type:
+                </th>
+                <th>
+                    Incomplete Orders:
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pt in Model)
+            {
+                <tr>
+                    <td>
+                        @pt.Label
+                    </td>
+                    <td>
+                        @pt.Quantity
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a asp-action="Index">Back</a>
+</div>

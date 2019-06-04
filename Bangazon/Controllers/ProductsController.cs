@@ -74,7 +74,16 @@ namespace Bangazon.Controllers
             var product = await _context.Product
                 .Include(p => p.ProductType)
                 .Include(p => p.User)
+                .Include(p => p.OrderProducts)
+                .ThenInclude(op => op.Order)
                 .FirstOrDefaultAsync(m => m.ProductId == id);
+
+            //Filter OrderProducts to only open orders
+            product.OrderProducts = product.OrderProducts.Where(op => op.Order.DateCompleted != null).ToList();
+
+            //Subtract amount ordered to give the correct amount in stock. Store this value in quantity.
+            product.Quantity = product.Quantity - product.OrderProducts.Count();
+
             if (product == null)
             {
                 return NotFound();
@@ -286,7 +295,6 @@ namespace Bangazon.Controllers
                        OrderProducts = p.OrderProducts.Where(op => op.Order.DateCompleted != null).ToList()
                    });
                 
-
             return View(await applicationDbContext1.ToListAsync());
         }
         
