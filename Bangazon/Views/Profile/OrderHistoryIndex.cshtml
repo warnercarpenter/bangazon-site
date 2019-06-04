@@ -20,11 +20,7 @@
                 <th>
                     Payment Type:
                 </th>
-                <th>
-                    Rating:
-                    <br />
-                    1 2 3 4 5
-                </th>
+                
             </tr>
         </thead>
         <tbody>
@@ -44,13 +40,7 @@
                 <td>
                     @order.PaymentType.Description
                 </td>
-                <td>
-                    @Html.RadioButton("Rating", 1)
-                    @Html.RadioButton("Rating", 2)
-                    @Html.RadioButton("Rating", 3)
-                    @Html.RadioButton("Rating", 4)
-                    @Html.RadioButton("Rating", 5)
-                </td>
+
                 <td>
                     <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.OrderId">Details</a>
                 </td>
