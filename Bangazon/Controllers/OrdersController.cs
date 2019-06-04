@@ -27,8 +27,11 @@ namespace Bangazon.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
+            var user = await GetCurrentUserAsync();
+            var userId = user.Id;
 
-            var applicationDbContext = _context.Order.Include(o => o.PaymentType).Include(o => o.User).Include(o => o.OrderProducts).ThenInclude(op => op.Product);
+            var applicationDbContext = _context.Order.Include(o => o.PaymentType)
+                .Include(o => o.User).Where(o => o.UserId == userId).Where(o => o.DateCompleted == null).Include(o => o.OrderProducts).ThenInclude(op => op.Product);
             
             return View(await applicationDbContext.ToListAsync());
         }
@@ -191,9 +194,6 @@ namespace Bangazon.Controllers
             var order = await _context.Order
                 .Include(o => o.PaymentType)
                 .Include(o => o.User)
-                .Include(o=> o.OrderProducts)
-                .ThenInclude(o=>o.Product)
-                .ThenInclude(o=>o.ProductType)
                 .FirstOrDefaultAsync(m => m.OrderId == id);
             if (order == null)
             {
@@ -208,10 +208,7 @@ namespace Bangazon.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = _context.Order.Include(o => o.OrderProducts)
-                .SingleOrDefault(o => o.OrderId == id);
-            var productList = order.OrderProducts.ToList();
-            _context.OrderProduct.RemoveRange(productList);
+            var order = await _context.Order.FindAsync(id);
             _context.Order.Remove(order);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -241,12 +238,17 @@ namespace Bangazon.Controllers
 
         [HttpPost, ActionName("DeleteOrderProduct")]
         [ValidateAntiForgeryToken]
-        public async void  DeleteOrderProductConfirmed(int id)
+        public async Task<IActionResult> DeleteOrderProductConfirmed(int id)
         {
             var orderProduct = await _context.OrderProduct.FindAsync(id);
+            var orderToCheck = await _context.Order.Include(o => o.OrderProducts).FirstOrDefaultAsync(o => o.OrderId == orderProduct.OrderId);
             _context.OrderProduct.Remove(orderProduct);
+            if (orderToCheck.OrderProducts.Count() == 1)
+            {
+                _context.Order.Remove(orderToCheck);
+            }
             await _context.SaveChangesAsync();
-            //return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index));
         }
     }
 }

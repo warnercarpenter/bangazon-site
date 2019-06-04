@@ -33,6 +33,14 @@ namespace Bangazon.Controllers
                     .ThenInclude(o => o.OrderProducts)
                         .ThenInclude(op => op.Product)
                             .ThenInclude(p => p.ProductType)
+                .Where(au => au.Orders.Any(or => or.DateCompleted == null))
+                .Select(au => new ApplicationUser
+                {
+                    FirstName = au.FirstName,
+                    LastName = au.LastName,
+                    StreetAddress = au.StreetAddress,
+                    Orders = au.Orders
+                })
                 .Where(au => au.Orders.Count() > 1);
 
             if (users == null)
