@@ -28,10 +28,10 @@
                     @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
-                    @if (ViewBag.UserId == item.UserId)
+                    @*@if (ViewBag.UserId == item.UserId)
                     {
                         <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
-                    }
+                    }*@
 
                     <a asp-action="Details" asp-route-id="@item.ProductId">Details</a>
                 </td>

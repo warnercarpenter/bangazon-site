@@ -37,10 +37,7 @@ namespace Bangazon.Controllers
 
         private readonly ApplicationDbContext _context;
 
-        //public ProductsController(ApplicationDbContext context)
-        //{
-        //    _context = context;
-        //}
+       
 
         // GET: Products
         [Authorize]
@@ -53,9 +50,10 @@ namespace Bangazon.Controllers
             {
                 var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
                    .Include(p => p.User)
-                   .Where(p => p.Title.Contains(SearchProduct) || p.City.ToLower() == SearchProduct.ToLower())
-                   .OrderByDescending(p => p.DateCreated);
 
+                   .Where(p => p.Title.Contains(SearchProduct) || p.City.ToLower() == SearchProduct.ToLower())
+
+                   .OrderByDescending(p => p.DateCreated);
                 return View(await applicationDbContext1.ToListAsync());
             }
             //if not show all products
@@ -119,6 +117,13 @@ namespace Bangazon.Controllers
                 ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
                 return View();
             }
+            if (product.Price > 10000)
+            {
+                ViewBag.Message = string.Format("Price cannot exceed $10,000.");
+                ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
+                ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
+                return View();
+            }
             if (ModelState.IsValid)
             {
                 // adding current userId
@@ -170,6 +175,7 @@ namespace Bangazon.Controllers
             {
                 return NotFound();
             }
+
             ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
             ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
             return View(product);
@@ -186,7 +192,13 @@ namespace Bangazon.Controllers
             {
                 return NotFound();
             }
-
+            if (product.Price > 10000)
+            {
+                ViewBag.Message = string.Format("Price cannot exceed $10,000.");
+                ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label");
+                ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
+                return View();
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -205,8 +217,9 @@ namespace Bangazon.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyProducts));
             }
+           
             ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "ProductTypeId", "Label", product.ProductTypeId);
             ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", product.UserId);
             return View(product);
@@ -240,12 +253,24 @@ namespace Bangazon.Controllers
             var product = await _context.Product.FindAsync(id);
             _context.Product.Remove(product);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MyProducts));
         }
 
         private bool ProductExists(int id)
         {
             return _context.Product.Any(e => e.ProductId == id);
         }
+
+        // GET: Products/MyProducts
+        public async Task<IActionResult> MyProducts()
+        {
+            var user = await GetCurrentUserAsync();
+            //get only the user's (who is logged in) products 
+            var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
+                   .Include(p => p.User)
+                   .Where(p => p.UserId == user.Id);
+            return View(await applicationDbContext1.ToListAsync());
+        }
+        
     }
 }
