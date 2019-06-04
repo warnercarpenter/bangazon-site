@@ -46,8 +46,10 @@ namespace Bangazon.Controllers
             var currentUser = await GetCurrentUserAsync();
             ViewBag.UserId = currentUser.Id;
             // if searchBox is not empty then filter product list
+            ViewBag.SearchProduct = false;
             if (SearchProduct != null)
             {
+                ViewBag.SearchProduct = true;
                 var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
                    .Include(p => p.User)
 
@@ -128,7 +130,7 @@ namespace Bangazon.Controllers
             {
                 
 
-                if (viewproduct.ImageFile.Length > 0)
+                if (viewproduct.ImageFile != null)
                 {
                     // don't rely on or trust the FileName property without validation
                     //**Warning**: The following code uses `GetTempFileName`, which throws

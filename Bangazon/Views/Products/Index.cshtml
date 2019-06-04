@@ -29,9 +29,14 @@
                 </td>
                 <td>
                     @*@if (ViewBag.UserId == item.UserId)
+        {
+            <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
+        }*@
+
+                    @if (ViewBag.SearchProduct == true)
                     {
-                        <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
-                    }*@
+                        <img src="/images/@item.ImagePath" class="productDetaiLImage" />
+                    }
 
                     <a asp-action="Details" asp-route-id="@item.ProductId">Details</a>
                 </td>
