@@ -74,7 +74,16 @@ namespace Bangazon.Controllers
             var product = await _context.Product
                 .Include(p => p.ProductType)
                 .Include(p => p.User)
+                .Include(p => p.OrderProducts)
+                .ThenInclude(op => op.Order)
                 .FirstOrDefaultAsync(m => m.ProductId == id);
+
+            //Filter OrderProducts to only open orders
+            product.OrderProducts = product.OrderProducts.Where(op => op.Order.DateCompleted != null).ToList();
+
+            //Subtract amount ordered to give the correct amount in stock. Store this value in quantity.
+            product.Quantity = product.Quantity - product.OrderProducts.Count();
+
             if (product == null)
             {
                 return NotFound();
@@ -268,7 +277,24 @@ namespace Bangazon.Controllers
             //get only the user's (who is logged in) products 
             var applicationDbContext1 = _context.Product.Include(p => p.ProductType)
                    .Include(p => p.User)
-                   .Where(p => p.UserId == user.Id);
+                   .Include(p => p.OrderProducts)
+                   .ThenInclude(op => op.Order)
+                   .Where(p => p.UserId == user.Id)
+                   .Select(p => new Product
+                   {
+                       ProductId = p.ProductId,
+                       DateCreated = p.DateCreated,
+                       Description = p.Description,
+                       Title = p.Title,
+                       Price = p.Price,
+                       Quantity = p.Quantity,
+                       UserId = p.UserId,
+                       City = p.City,
+                       ImagePath = p.ImagePath,
+                       ProductTypeId = p.ProductTypeId,
+                       OrderProducts = p.OrderProducts.Where(op => op.Order.DateCompleted != null).ToList()
+                   });
+                
             return View(await applicationDbContext1.ToListAsync());
         }
         
