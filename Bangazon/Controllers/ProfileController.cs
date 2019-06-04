@@ -40,6 +40,7 @@ namespace Bangazon.Controllers
             return View();
         }
 
+       
 
 
 
@@ -49,8 +50,31 @@ namespace Bangazon.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        //Get orders
+        public async Task<IActionResult> OrderHistoryIndex()
+        {
+            var user = await GetCurrentUserAsync();
 
+            ViewBag.Orders = _context.Order
+                .Include(o => o.PaymentType)
+                .Where(o => o.UserId == user.Id && o.DateCompleted != null);
+            
+            return View();
+        }
+        public ActionResult MultipleOrders()
+        {
 
+            var users = _context.ApplicationUsers.Include(au => au.Orders).Where(au => au.Orders.Count() > 1);
+
+            if (users == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Users = users;
+
+            return View(users);
+        }
 
 
         // GET: Profile/CreatePaymentType
