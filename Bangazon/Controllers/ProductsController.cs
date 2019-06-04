@@ -98,19 +98,17 @@ namespace Bangazon.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create( UploadImageViewModel viewproduct )
         {
-            //viewproduct.product  = new Product();
-            // addind current dateTime
+            
+            // add current dateTime
             viewproduct.product.DateCreated = DateTime.Now;
             ModelState.Remove("product.UserId");
-                var user = await GetCurrentUserAsync();
-                viewproduct.product.UserId = user.Id;
+
+            // adding current userId
+            var user = await GetCurrentUserAsync();
+            viewproduct.product.UserId = user.Id;
+           
             //if product type is 0, give the error message
-            //viewproduct.product.Description = "";
-            //viewproduct.product.Title = "Title";
-            //viewproduct.product.Price = 1;
-            //viewproduct.product.Quantity = 1;
-            //viewproduct.product.City = "City";
-            //viewproduct.product.ProductTypeId = 1;
+            
             if (viewproduct.product.ProductTypeId == 0)
             {
                 ViewBag.Message = string.Format("Please select the Category");
@@ -128,7 +126,7 @@ namespace Bangazon.Controllers
             }
             if (ModelState.IsValid)
             {
-                // adding current userId
+                
 
                 if (viewproduct.ImageFile.Length > 0)
                 {
