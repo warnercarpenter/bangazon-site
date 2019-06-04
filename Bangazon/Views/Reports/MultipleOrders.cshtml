@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in ViewBag.Users)
+            @foreach (var user in Model)
             {
                 <tr>
                     <td>
@@ -35,6 +35,42 @@
                         @user.Orders.Count
                     </td>
                 </tr>
+                @foreach (var order in user.Orders)
+                {
+                    <table>
+                        <tr> Order No : </tr>
+                        <tr> Order Date : </tr>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Product Type
+                                </th>
+                                <th>
+                                    Title
+                                </th>
+                                <th>
+                                    Price
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var orderProduct in order)
+                            {
+                                <tr>
+                                    <td>
+                                        @orderProduct.ProductType.Label
+                                    </td>
+                                    <td>
+                                        @orderProduct.Product.Title
+                                    </td>
+                                    <td>
+                                        @orderProduct.Price
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
             }
         </tbody>
     </table>

@@ -28,7 +28,12 @@ namespace Bangazon.Controllers
         public IActionResult MultipleOrders()
         {
 
-            var users = _context.ApplicationUsers.Include(au => au.Orders).Where(au => au.Orders.Count() > 1);
+            var users = _context.ApplicationUsers
+                .Include(au => au.Orders)
+                    .ThenInclude(o => o.OrderProducts)
+                        .ThenInclude(op => op.Product)
+                            .ThenInclude(p => p.ProductType)
+                .Where(au => au.Orders.Count() > 1);
 
             if (users == null)
             {
