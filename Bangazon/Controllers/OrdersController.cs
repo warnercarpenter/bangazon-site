@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
 using Microsoft.AspNetCore.Identity;
+using Bangazon.Models.OrderViewModels;
 
 namespace Bangazon.Controllers
 {
@@ -255,6 +256,34 @@ namespace Bangazon.Controllers
             {
                 _context.Order.Remove(orderToCheck);
             }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Submit(int id)
+        {
+            var user = await GetCurrentUserAsync();
+
+            OrderPayments OrderPayment = new OrderPayments();
+             OrderPayment.Order = _context.Order.Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                 .SingleOrDefault(o => o.OrderId == id);
+
+            OrderPayment.PaymentTypes =  _context.PaymentType.Where(p => p.UserId == user.Id).ToList();
+            return View(OrderPayment);
+        }
+
+        [HttpPost, ActionName("Submit")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitOrder(int id, int? YourRadioButton)
+        {
+            
+            Order order = _context.Order
+                .SingleOrDefault(o => o.OrderId == id);
+            order.PaymentTypeId = YourRadioButton;
+            order.DateCompleted = DateTime.Now;
+            _context.Update(order);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

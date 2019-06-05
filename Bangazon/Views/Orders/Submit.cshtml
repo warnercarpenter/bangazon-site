@@ -1,0 +1,46 @@
+﻿@model Bangazon.Models.OrderViewModels.OrderPayments
+
+@{
+    ViewData["Title"] = "Submit";
+}
+
+<h1>Submit</h1>
+
+<div>
+    <h4>Payments</h4>
+    <hr />
+    <dl class="row font-weight-bold">
+        <dt>
+            <dd class="col-sm-10">
+                Order Id : @Html.DisplayFor(model => model.Order.OrderId)
+                Date : @Html.DisplayFor(model => model.Order.DateCreated)
+            </dd>
+        </dt>
+    </dl>
+    <h4 class="font-weight-light">Products</h4>
+    @foreach (var orderProduct in Model.Order.OrderProducts)
+    {
+        <dl class="row font-weight-light">
+            <dt class="col-sm-2 font-weight-light">
+                @Html.DisplayFor(model => orderProduct.Product.Title)
+            </dt>
+            <dt class="col-sm-2 font-weight-light">
+                @Html.DisplayFor(model => orderProduct.Product.Price)
+            </dt>
+        </dl>
+    }
+    <h3>Select Payment Type</h3>
+        <form asp-controller="Orders" asp-action="SubmitOrder" asp-route-id="@Model.Order.OrderId" class="font-weight-bold">
+    @foreach (var paymentType in Model.PaymentTypes)
+    {
+            <dl>
+                @* @Html.RadioButtonFor(model => paymentType.AccountNumber, paymentType.PaymentTypeId) @paymentType.AccountNumber*@
+                @Html.RadioButton("YourRadioButton", paymentType.PaymentTypeId) @paymentType.Description @paymentType.AccountNumber  
+            </dl>
+            }
+        <input class="btn btn-info" type="submit" value="Confirm Order" />
+        </form>
+    </div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
