@@ -48,7 +48,7 @@
             </table>
             <h6>Total: $@item.OrderProducts.Sum(op => op.Product.Price)</h6>
             <div>
-                <a asp-action="Delete">
+                <a asp-controller="Orders" asp-action="Submit" asp-route-id="@item.OrderId">
                     <input class="btn btn-info" type="submit" value="Confirm Order" />
                 </a>
                 <a asp-controller="Orders" asp-action="Delete" asp-route-id="@item.OrderId">
