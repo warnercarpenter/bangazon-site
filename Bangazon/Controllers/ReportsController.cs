@@ -48,6 +48,27 @@ namespace Bangazon.Controllers
             return View(usersView);
         }
 
+        public IActionResult MultipleOrders()
+        {
+
+            //Get users and include Orders
+            var users = _context.ApplicationUsers
+                .Include(au => au.Orders);
+
+            //Only include active orders
+            foreach (var user in users)
+            {
+                user.Orders = user.Orders.Where(o => o.DateCompleted == null).ToList();
+            }
+
+            if (users == null)
+            {
+                return NotFound();
+            }
+
+            return View(users);
+        }
+
         public IActionResult AbandonedProductTypes()
         {
 

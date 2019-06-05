@@ -9,7 +9,7 @@
 <div>
     @foreach (var user in Model.Users)
     {
-        <table class="table">
+        <table class="table bg-light">
             <tr>
                 <th>
                     Name :  @user.FirstName  @user.LastName
@@ -22,7 +22,7 @@
 
         @foreach (var order in user.Orders)
         {
-            <table class="table font-weight-light">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Order No : @order.OrderId </th>
@@ -30,8 +30,7 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody class="table-bordered">
-                {
+                <tbody class="table-bordered " >
                     @foreach (var orderProduct in order.OrderProducts)
                     {
                         <tr>
@@ -46,7 +45,6 @@
                             </td>
                         </tr>
                     }
-                }
                 </tbody>
             </table>
         }

@@ -1,4 +1,5 @@
-﻿@model Bangazon.Models.ViewModel.MultipleOrder
+@model IEnumerable<Bangazon.Models.ApplicationUser>
+
 @{
     ViewData["Title"] = "MultipleOrders";
 }
@@ -7,58 +8,39 @@
 
 
 <div>
-    @foreach (var user in Model.Users)
-    { 
     <table class="table">
+        <thead>
             <tr>
                 <th>
-                    Name :  @user.FirstName  @user.LastName
+                    First Name:
                 </th>
                 <th>
-                    Open Orders :  @user.Orders.Count
+                    Last Name:
+                </th>
+                <th>
+                    Open Orders:
                 </th>
             </tr>
-    </table>
-           
-                @foreach (var order in user.Orders)
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                if (user.Orders.Count > 1)
                 {
-                    <table class="table font-weight-light">
-                        <thead>
-                            <tr>
-                                <th>Order No : @order.OrderId </th>
-                                <th>Order Date : @order.DateCreated</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                    <tbody class=" table-bordered">
                     <tr>
-                        <th>
-                            Product Type
-                        </th>
-                        <th>
-                            Title
-                        </th>
-                        <th>
-                            Price
-                        </th>
+                        <td>
+                            @user.FirstName
+                        </td>
+                        <td>
+                            @user.LastName
+                        </td>
+                        <td>
+                            @user.Orders.Count
+                        </td>
                     </tr>
-                        @foreach (var orderProduct in order.OrderProducts)
-                        {
-                            <tr>
-                                <td>
-                                    @orderProduct.Product.ProductType.Label
-                                </td>
-                                <td>
-                                    @orderProduct.Product.Title
-                                </td>
-                                <td>
-                                    @orderProduct.Product.Price
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-    </table>
                 }
-    }
+            }
+        </tbody>
+    </table>
     <a asp-action="Index">Back</a>
 </div>
