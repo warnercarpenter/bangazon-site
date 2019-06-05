@@ -9,48 +9,51 @@ using System.Web;
 namespace Bangazon.Models
 {
     public class Product
-  {
-    [Key]
-    public int ProductId {get;set;}
+    {
+        [Key]
+        public int ProductId { get; set; }
 
-    [Required]
-    [DataType(DataType.Date)]
-    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-    public DateTime DateCreated {get;set;}
+        [Required]
+        [DataType(DataType.Date)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime DateCreated { get; set; }
 
-    [Required]
-    [StringLength(255)]
-    public string Description { get; set; }
+        [Required]
+        [StringLength(255)]
+        public string Description { get; set; }
 
-    [Required]
-    [StringLength(55, ErrorMessage="Please shorten the product title to 55 characters")]
-    public string Title { get; set; }
+        [Required]
+        [StringLength(55, ErrorMessage = "Please shorten the product title to 55 characters")]
+        public string Title { get; set; }
 
-    [Required]
-    [DisplayFormat(DataFormatString = "{0:C}")]
-    public double Price { get; set; }
+        [Required]
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double Price { get; set; }
 
-    [Required]
-    public int Quantity { get; set; }
+        [Required]
+        public int Quantity { get; set; }
 
-    [Required]
-    public string UserId {get; set;}
+        [Required]
+        public string UserId { get; set; }
 
-    public string City {get; set;}
+        public string City { get; set; }
 
-     [DisplayName("Upload Image")]
-    public string ImagePath {get; set;}
+        [DisplayName("Upload Image")]
+        public string ImagePath { get; set; }
 
-    public ApplicationUser User { get; set; }
+        public ApplicationUser User { get; set; }
 
-    [Required (ErrorMessage = "Please select the Category")]
-        [Display(Name="Product Category")]
-    public int ProductTypeId { get; set; }
+        [Required(ErrorMessage = "Please select the Category")]
+        [Display(Name = "Product Category")]
+        public int ProductTypeId { get; set; }
 
-    public ProductType ProductType { get; set; }
+        public ProductType ProductType { get; set; }
 
-    public virtual ICollection<OrderProduct> OrderProducts { get; set; }
+        public virtual ICollection<OrderProduct> OrderProducts { get; set; }
 
-   
-  }
+        public virtual ICollection<ProductRating> ProductRatings { get; set; }
+
+        public virtual ICollection<ProductLike> ProductLikes { get; set; }
+
+    }
 }
