@@ -28,30 +28,23 @@ namespace Bangazon.Controllers
 
         public IActionResult MultipleOrders()
         {
+            //an instance of viewModel
             MultipleOrder usersView = new MultipleOrder();
             usersView.Users = new List<ApplicationUser>();
 
+            // fetch all data of all orders and their details 
               usersView.Users = _context.ApplicationUsers
                 .Include(au => au.Orders)
                     .ThenInclude(o => o.OrderProducts)
                         .ThenInclude(op => op.Product)
                             .ThenInclude(p => p.ProductType)
                 .Where(au => au.Orders.Any(or => or.DateCompleted == null))
-                //.Select(au => new ApplicationUser
-                //{
-                //    FirstName = au.FirstName,
-                //    LastName = au.LastName,
-                //    StreetAddress = au.StreetAddress,
-                //    Orders = au.Orders
-                //})
                 .Where(au => au.Orders.Count() > 1).ToList();
             
             if (usersView.Users == null)
             {
                 return NotFound();
             }
-
-            //ViewBag.Users = usersView.Users;
 
             return View(usersView);
         }
