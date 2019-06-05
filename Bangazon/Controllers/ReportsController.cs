@@ -30,24 +30,20 @@ namespace Bangazon.Controllers
         public IActionResult MultipleOrders()
         {
 
+            //Get users and include Orders
             var users = _context.ApplicationUsers
-                .Include(au => au.Orders)
-                .Where(au => au.Orders.Any(or => or.DateCompleted == null))
-                .Select(au => new ApplicationUser
-                {
-                    FirstName = au.FirstName,
-                    LastName = au.LastName,
-                    StreetAddress = au.StreetAddress,
-                    Orders = au.Orders
-                })
-                .Where(au => au.Orders.Count() > 1);
+                .Include(au => au.Orders);
+                
+            //Only include active orders
+            foreach (var user in users)
+            {
+                user.Orders = user.Orders.Where(o => o.DateCompleted == null).ToList();
+            }
 
             if (users == null)
             {
                 return NotFound();
             }
-
-            ViewBag.Users = users;
 
             return View(users);
         }

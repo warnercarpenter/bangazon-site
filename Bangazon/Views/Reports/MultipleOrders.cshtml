@@ -1,4 +1,5 @@
-﻿
+﻿@model IEnumerable<Bangazon.Models.ApplicationUser>
+
 @{
     ViewData["Title"] = "MultipleOrders";
 }
@@ -7,22 +8,24 @@
 
 
 <div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        First Name:
-                    </th>
-                    <th>
-                        Last Name:
-                    </th>
-                    <th>
-                        Open Orders:
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in ViewBag.Users)
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    First Name:
+                </th>
+                <th>
+                    Last Name:
+                </th>
+                <th>
+                    Open Orders:
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                if (user.Orders.Count > 1)
                 {
                     <tr>
                         <td>
@@ -36,7 +39,8 @@
                         </td>
                     </tr>
                 }
-            </tbody>
-        </table>
+            }
+        </tbody>
+    </table>
     <a asp-action="Index">Back</a>
 </div>
