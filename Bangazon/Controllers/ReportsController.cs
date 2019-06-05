@@ -56,6 +56,43 @@ namespace Bangazon.Controllers
             return View(usersView);
         }
 
+        public IActionResult AbandonedProductTypes()
+        {
+
+            //Get Al Product Types and Inclide Products, OrderProducts, and Orders
+            List<ProductType> productTypes = _context.ProductType
+                .Include(pt => pt.Products)
+                .ThenInclude(p => p.OrderProducts)
+                .ThenInclude(op => op.Order)
+                .ToList();
+
+            //Loop through each Product Type
+            foreach (ProductType pt in productTypes)
+            {
+                //Loop through each Product in each Product Type
+                foreach (Product product in pt.Products)
+                {
+                    //Limit OrderProducts to only contain unfulfilled orders
+                    product.OrderProducts = product.OrderProducts.Where(op => op.Order.DateCompleted == null).ToList();
+                    //Set Quantity of each product to the Count of the new OrderProductList
+                    product.Quantity = product.OrderProducts.Count();
+                }
+
+                //Set the Quantity of the Product Type to the sum of the quantities of each Product
+                pt.Quantity = pt.Products.Sum(p => p.Quantity);
+            }
+
+            //Create a new list which is the same as the original PT list but ordered by quanitity. Only take the top five.
+            List<ProductType> newProductTypes = productTypes.OrderByDescending(pt => pt.Quantity).Take(5).ToList();
+
+            if (newProductTypes == null)
+            {
+                return NotFound();
+            }
+
+            return View(newProductTypes);
+        }
+
         // GET: Orders/Create
         public IActionResult Create()
         {
