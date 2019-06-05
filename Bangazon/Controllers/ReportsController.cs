@@ -45,6 +45,7 @@ namespace Bangazon.Controllers
             {
                 user.Orders = user.Orders.Where(o => o.DateCompleted == null).ToList();
             }
+
             if (usersView.Users == null)
             {
                 return NotFound();
