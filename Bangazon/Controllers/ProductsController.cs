@@ -137,8 +137,6 @@ namespace Bangazon.Controllers
             }
             if (ModelState.IsValid)
             {
-                
-
                 if (viewproduct.ImageFile != null)
                 {
                     // don't rely on or trust the FileName property without validation
