@@ -301,6 +301,19 @@ namespace Bangazon.Controllers
         public async Task<IActionResult> RateProduct(int id)
         {
             var user = await GetCurrentUserAsync();
+            //gives us a default value for message
+            HttpContext.Session.SetString("Message", "");
+            //gives a list of all product ratings that contain the current users id & the id 
+            //of the selected product
+            List<ProductRating> productRatings = _context.ProductRating.Where(pr => pr.ProductId == id && pr.UserId == user.Id).ToList();
+            //checks if a product rating already exists for this user & this product
+            if (productRatings.Count > 0 )
+            {
+                //sets message in session storage to the appropriate error
+                HttpContext.Session.SetString("Message", "You have already rated this product.");
+                //sends the user back to the order history index view
+                return RedirectToAction("OrderHistoryIndex", "Profile");
+            }
 
             ProductRating productRating = new ProductRating
             {
@@ -319,6 +332,7 @@ namespace Bangazon.Controllers
             _context.Add(productRating);
             await _context.SaveChangesAsync();
             return RedirectToAction("OrderHistoryIndex", "Profile");
-        }
+
     }
+}
 }
