@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
+using Bangazon.Models.ViewModel;
 
 namespace Bangazon.Controllers
 {
@@ -27,30 +28,32 @@ namespace Bangazon.Controllers
 
         public IActionResult MultipleOrders()
         {
+            MultipleOrder usersView = new MultipleOrder();
+            usersView.Users = new List<ApplicationUser>();
 
-            var users = _context.ApplicationUsers
+              usersView.Users = _context.ApplicationUsers
                 .Include(au => au.Orders)
                     .ThenInclude(o => o.OrderProducts)
                         .ThenInclude(op => op.Product)
                             .ThenInclude(p => p.ProductType)
                 .Where(au => au.Orders.Any(or => or.DateCompleted == null))
-                .Select(au => new ApplicationUser
-                {
-                    FirstName = au.FirstName,
-                    LastName = au.LastName,
-                    StreetAddress = au.StreetAddress,
-                    Orders = au.Orders
-                })
-                .Where(au => au.Orders.Count() > 1);
-
-            if (users == null)
+                //.Select(au => new ApplicationUser
+                //{
+                //    FirstName = au.FirstName,
+                //    LastName = au.LastName,
+                //    StreetAddress = au.StreetAddress,
+                //    Orders = au.Orders
+                //})
+                .Where(au => au.Orders.Count() > 1).ToList();
+            
+            if (usersView.Users == null)
             {
                 return NotFound();
             }
 
-            ViewBag.Users = users;
+            //ViewBag.Users = usersView.Users;
 
-            return View(users);
+            return View(usersView);
         }
 
         // GET: Orders/Create

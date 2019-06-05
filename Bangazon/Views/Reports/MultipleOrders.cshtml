@@ -1,4 +1,4 @@
-﻿
+﻿@model Bangazon.Models.ViewModel.MultipleOrder
 @{
     ViewData["Title"] = "MultipleOrders";
 }
@@ -7,60 +7,58 @@
 
 
 <div>
-
-        <table class="table">
-            <thead>
-
-                <tr>
-                    <th>
-                        First Name:
-                    </th>
-                    <th>
-                        Last Name:
-                    </th>
-                    <th>
-                        Open Orders:
-                    </th>
-                </tr>
-                @foreach (var order in Model.Orders)
+    @foreach (var user in Model.Users)
+    { 
+    <table class="table">
+            <tr>
+                <th>
+                    Name :  @user.FirstName  @user.LastName
+                </th>
+                <th>
+                    Open Orders :  @user.Orders.Count
+                </th>
+            </tr>
+    </table>
+           
+                @foreach (var order in user.Orders)
                 {
-                    <table>
-                        <tr> Order No : </tr>
-                        <tr> Order Date : </tr>
+                    <table class="table font-weight-light">
                         <thead>
                             <tr>
-                                <th>
-                                    Product Type
-                                </th>
-                                <th>
-                                    Title
-                                </th>
-                                <th>
-                                    Price
-                                </th>
+                                <th>Order No : @order.OrderId </th>
+                                <th>Order Date : @order.DateCreated</th>
+                                <th></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach (var orderProduct in order)
-                            {
-                                <tr>
-                                    <td>
-                                        @orderProduct.ProductType.Label
-                                    </td>
-                                    <td>
-                                        @orderProduct.Product.Title
-                                    </td>
-                                    <td>
-                                        @orderProduct.Price
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-            }
-        </tbody>
+                    <tbody class=" table-bordered">
+                    <tr>
+                        <th>
+                            Product Type
+                        </th>
+                        <th>
+                            Title
+                        </th>
+                        <th>
+                            Price
+                        </th>
+                    </tr>
+                        @foreach (var orderProduct in order.OrderProducts)
+                        {
+                            <tr>
+                                <td>
+                                    @orderProduct.Product.ProductType.Label
+                                </td>
+                                <td>
+                                    @orderProduct.Product.Title
+                                </td>
+                                <td>
+                                    @orderProduct.Product.Price
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
     </table>
-
+                }
+    }
     <a asp-action="Index">Back</a>
 </div>
