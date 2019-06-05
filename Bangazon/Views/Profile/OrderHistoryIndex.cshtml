@@ -20,35 +20,43 @@
                 <th>
                     Payment Type:
                 </th>
-                
+
             </tr>
         </thead>
         <tbody>
             @foreach (var order in ViewBag.Orders)
             {
-             
-            <tr>
-                <td>
-                    @order.OrderId
-                </td>
-                <td>
-                    @order.DateCreated
-                </td>
-                <td>
-                    @order.DateCompleted
-                </td>
-                <td>
-                    @order.PaymentType.Description
-                </td>
 
-                <td>
-                    <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.OrderId">Details</a>
-                </td>
-            </tr>
+                <tr>
+                    <td>
+                        @order.OrderId
+                    </td>
+                    <td>
+                        @order.DateCreated
+                    </td>
+                    <td>
+                        @order.DateCompleted
+                    </td>
+                    <td>
+                        @order.PaymentType.Description
+                    </td>
+
+                    <td>
+                        <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.OrderId">Details</a>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
-    
-               
+    @*checks if viewbag message is the default value*@
+    @if (ViewBag.Message != "" && ViewBag.Message != null)
+    {
+        <script type="text/javascript">
+                    window.onload = function() {
+                        alert("@ViewBag.Message");
+                    }
+        </script>
+    }
+
     <a asp-controller="Profile" asp-action="Index">Back</a>
 </div>

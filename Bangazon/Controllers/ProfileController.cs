@@ -54,6 +54,10 @@ namespace Bangazon.Controllers
         public async Task<IActionResult> OrderHistoryIndex()
         {
             var user = await GetCurrentUserAsync();
+            //gets the current value of message and puts it in viewbag
+            ViewBag.Message = HttpContext.Session.GetString("Message");
+            //resets message to default value
+            HttpContext.Session.SetString("Message", "");
 
             ViewBag.Orders = _context.Order
                 .Include(o => o.PaymentType)
