@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
 using Microsoft.AspNetCore.Authorization;
+using Bangazon.Models.ViewModel;
 
 namespace Bangazon.Controllers
 {
@@ -27,13 +28,40 @@ namespace Bangazon.Controllers
             return View();
         }
 
+        public IActionResult IncompleteOrders()
+        {
+            //an instance of viewModel
+            MultipleOrder usersView = new MultipleOrder();
+            usersView.Users = new List<ApplicationUser>();
+
+            // fetch all data of all orders and their details
+            usersView.Users = _context.ApplicationUsers
+              .Include(au => au.Orders)
+                  .ThenInclude(o => o.OrderProducts)
+                      .ThenInclude(op => op.Product)
+                          .ThenInclude(p => p.ProductType).ToList();
+
+            //.Where(au => au.Orders.Any(o => o.DateCompleted != DateTime.MinValue)).ToList();
+
+            foreach (var user in usersView.Users)
+            {
+                user.Orders = user.Orders.Where(o => o.DateCompleted == null).ToList();
+            }
+            if (usersView.Users == null)
+            {
+                return NotFound();
+            }
+
+            return View(usersView);
+        }
+
         public IActionResult MultipleOrders()
         {
 
             //Get users and include Orders
             var users = _context.ApplicationUsers
                 .Include(au => au.Orders);
-                
+
             //Only include active orders
             foreach (var user in users)
             {
@@ -94,7 +122,7 @@ namespace Bangazon.Controllers
         }
 
         // POST: Orders/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -130,7 +158,7 @@ namespace Bangazon.Controllers
         }
 
         // POST: Orders/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
