@@ -38,8 +38,11 @@ namespace Bangazon.Controllers
                     .ThenInclude(o => o.OrderProducts)
                         .ThenInclude(op => op.Product)
                             .ThenInclude(p => p.ProductType)
-                .Where(au => au.Orders.Any(or => or.DateCompleted == null)).ToList();
-            
+
+                .Where(au => au.Orders.Any(o => o.DateCompleted == null)).ToList();
+
+            //persons.Where(p => p.Locations.Any(l => searchIds.Any(id => l.Id == id)));
+
             if (usersView.Users == null)
             {
                 return NotFound();
