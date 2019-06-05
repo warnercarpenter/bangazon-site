@@ -33,16 +33,18 @@ namespace Bangazon.Controllers
             usersView.Users = new List<ApplicationUser>();
 
             // fetch all data of all orders and their details 
-              usersView.Users = _context.ApplicationUsers
-                .Include(au => au.Orders)
-                    .ThenInclude(o => o.OrderProducts)
-                        .ThenInclude(op => op.Product)
-                            .ThenInclude(p => p.ProductType)
+            usersView.Users = _context.ApplicationUsers
+              .Include(au => au.Orders)
+                  .ThenInclude(o => o.OrderProducts)
+                      .ThenInclude(op => op.Product)
+                          .ThenInclude(p => p.ProductType).ToList();
 
-                .Where(au => au.Orders.Any(o => o.DateCompleted == null)).ToList();
+            //.Where(au => au.Orders.Any(o => o.DateCompleted != DateTime.MinValue)).ToList();
 
-            //persons.Where(p => p.Locations.Any(l => searchIds.Any(id => l.Id == id)));
-
+            foreach (var user in usersView.Users)
+            {
+                user.Orders = user.Orders.Where(o => o.DateCompleted == null).ToList();
+            }
             if (usersView.Users == null)
             {
                 return NotFound();
