@@ -36,14 +36,8 @@
         <a asp-controller="Products" asp-action="Details" asp-route-id="@orderProduct.Product.ProductId">
             @orderProduct.Product.Title
         </a>
-        <form>
-            <input type="radio" id="@orderProduct.Product.ProductId-1" />
-            <input type="radio" id="@orderProduct.Product.ProductId-2"/>
-            <input type="radio" id="@orderProduct.Product.ProductId-3" />
-            <input type="radio" id="@orderProduct.Product.ProductId-4"/>
-            <input type="radio" id="@orderProduct.Product.ProductId-5" />
-            <button type="submit">Submit</button>
-        </form>
+        <a asp-controller="Products" asp-action="RateProduct" asp-route-id="@orderProduct.ProductId">Rate Product</a>
+
         <br />
     }
 </div>

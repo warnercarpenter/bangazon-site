@@ -1,0 +1,31 @@
+﻿@model Bangazon.Models.ProductRating
+
+@{
+    ViewData["Title"] = "RateProduct";
+}
+
+<h1>Rate Product</h1>
+
+<form asp-action="CreateRating">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="ProductId" />
+    <input type="hidden" asp-for="UserId" />
+    <div class="form-group">
+        Rating
+        <div class="col-md-10">
+            1
+            @Html.RadioButtonFor(model => model.Rating, 1)
+            2
+            @Html.RadioButtonFor(model => model.Rating, 2)
+            3
+            @Html.RadioButtonFor(model => model.Rating, 3)
+            4
+            @Html.RadioButtonFor(model => model.Rating, 4)
+            5
+            @Html.RadioButtonFor(model => model.Rating, 5)
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
