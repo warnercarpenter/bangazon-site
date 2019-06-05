@@ -1,0 +1,56 @@
+﻿@model Bangazon.Models.ViewModel.MultipleOrder
+
+@{
+    ViewData["Title"] = "IncompleteOrders";
+}
+
+<h1>IncompleteOrders</h1>
+
+<div>
+    @foreach (var user in Model.Users)
+    {
+        <table class="table">
+            <tr>
+                <th>
+                    Name :  @user.FirstName  @user.LastName
+                </th>
+                <th>
+                    Open Orders :  @user.Orders.Count
+                </th>
+            </tr>
+        </table>
+
+        @foreach (var order in user.Orders)
+        {
+            <table class="table font-weight-light">
+                <thead>
+                    <tr>
+                        <th>Order No : @order.OrderId </th>
+                        <th>Order Date : @order.DateCreated</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="table-bordered">
+                {
+                    @foreach (var orderProduct in order.OrderProducts)
+                    {
+                        <tr>
+                            <td>
+                                @orderProduct.Product.ProductType.Label
+                            </td>
+                            <td>
+                                @orderProduct.Product.Title
+                            </td>
+                            <td>
+                                @orderProduct.Product.Price
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        }
+    }
+    <a asp-action="Index">Back</a>
+</div>
+

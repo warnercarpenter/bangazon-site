@@ -26,7 +26,7 @@ namespace Bangazon.Controllers
             return View();
         }
 
-        public IActionResult MultipleOrders()
+        public IActionResult IncompleteOrders()
         {
             //an instance of viewModel
             MultipleOrder usersView = new MultipleOrder();
@@ -38,8 +38,7 @@ namespace Bangazon.Controllers
                     .ThenInclude(o => o.OrderProducts)
                         .ThenInclude(op => op.Product)
                             .ThenInclude(p => p.ProductType)
-                .Where(au => au.Orders.Any(or => or.DateCompleted == null))
-                .Where(au => au.Orders.Count() > 1).ToList();
+                .Where(au => au.Orders.Any(or => or.DateCompleted == null)).ToList();
             
             if (usersView.Users == null)
             {
