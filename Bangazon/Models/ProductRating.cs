@@ -25,6 +25,6 @@ namespace Bangazon.Models
         [Required(ErrorMessage = "Please select a rating")]
         [Display(Name = "Rating")]
         [Range(1, 5)]
-        public int Rating { get; set; }
+        public int? Rating { get; set; }
     }
 }

@@ -9,7 +9,7 @@ using Bangazon.Data;
 using Bangazon.Models;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bangazon.Controllers
 {
@@ -30,6 +30,7 @@ namespace Bangazon.Controllers
 
         public SqlConnection Connection => new SqlConnection(_config.GetConnectionString("DefaultConnection"));
 
+        [Authorize]
         // GET: ProductTypes
         public async Task<IActionResult> Index()
         {
