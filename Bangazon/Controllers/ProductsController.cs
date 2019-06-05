@@ -91,7 +91,7 @@ namespace Bangazon.Controllers
 
             return View(product);
         }
-
+        [Authorize]
         // GET: Products/Create
         public IActionResult Create()
         {
@@ -297,6 +297,28 @@ namespace Bangazon.Controllers
                 
             return View(await applicationDbContext1.ToListAsync());
         }
-        
+
+        public async Task<IActionResult> RateProduct(int id)
+        {
+            var user = await GetCurrentUserAsync();
+
+            ProductRating productRating = new ProductRating
+            {
+                ProductId = id,
+                UserId = user.Id,
+                Rating = null
+            };
+
+            return View(productRating);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateRating( ProductRating productRating)
+        {
+            _context.Add(productRating);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("OrderHistoryIndex", "Profile");
+        }
     }
 }

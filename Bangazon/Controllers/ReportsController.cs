@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
+using Microsoft.AspNetCore.Authorization;
 using Bangazon.Models.ViewModel;
 
 namespace Bangazon.Controllers
@@ -20,6 +21,7 @@ namespace Bangazon.Controllers
             _context = context;
         }
 
+        [Authorize]
         // GET: Orders
         public async Task<IActionResult> Index()
         {
@@ -32,7 +34,7 @@ namespace Bangazon.Controllers
             MultipleOrder usersView = new MultipleOrder();
             usersView.Users = new List<ApplicationUser>();
 
-            // fetch all data of all orders and their details 
+            // fetch all data of all orders and their details
             usersView.Users = _context.ApplicationUsers
               .Include(au => au.Orders)
                   .ThenInclude(o => o.OrderProducts)
@@ -120,7 +122,7 @@ namespace Bangazon.Controllers
         }
 
         // POST: Orders/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -156,7 +158,7 @@ namespace Bangazon.Controllers
         }
 
         // POST: Orders/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
